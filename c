@@ -4,8 +4,7 @@
 #  Copyright (c) 2022 uGeek
 #
 VERSION="v0.3 10/04/2022"
-#
-#
+VERSION="v0.4 04/06/2022"
 
 mkdir -p ~/.config/rccalendar ~/.config/rccalendar/mount
 
@@ -14,32 +13,22 @@ then
 echo "Introduce el nombre del calendario: " ; read CALENDARIO
 echo "Creado archivo de configuración $CALENDARIO.conf"
 echo "
-# Nombre de Archivos del calendario
 CALFILE='calendar.txt'
 
-# Ruta del archivo del calendario
 CAL='local:$HOME/.config/rccalendar/calendar/calendar.txt'
 
-# Archivo done
 CAL_DONE='local:$HOME/.config/rccalendar/calendar/calendar-done.txt'
 
-# Directorios de los calendarios
 CALENDARDIR='local:$HOME/.config/rccalendar/calendar/'
 
 
-# Archivos de exportación en Markdown, OrgMode,...
 TITLEORG='0. CALENDARIO'
 CALENDAR_ORG='webdav:calendar/org/calendario.org'
 
 CALENDAR_MD='webdav:Notas/calendar_dashboard.md'
 
-# Editor de texto, para editar calendar
 EDITOR='nano'
 
-# Notificaciones. Dentro de la función notification
-#function notification {
-### añade aquí el código para las notificiones
-#}
 " > $HOME/.config/rccalendar/$CALENDARIO.conf
 echo "source ~/.config/rccalendar/$CALENDARIO.conf" > ~/.config/rccalendar/source
 touch ~/.config/rccalendar/rccalendar.pg
@@ -83,7 +72,7 @@ Opciones disponibles:
   calendar              Calendarios disponibles
   config                Editar archivo de configuración
   update                Mover eventos de la semana anterior al calendar-done.txt. Utilizar un cron semanal cata lunes. Ejem: 01 00  * * 7 c update
-  m                     Montar directorio del calendar.txt y abrir el archivo calendar.txt con el editor del archivo de configuración
+  mount                 Montar directorio del calendar.txt y abrir el archivo calendar.txt con el editor del archivo de configuración
   c       [CALENDARIO]  Cambiar de calendario
   calendar              Mostrar calendarios disponibles
 
@@ -133,7 +122,8 @@ Gestión de todos los calendarios:
 
   m       [CALENDARIO]                         Montar directorio del calendar.txt y abrir el archivo calendar.txt con el editor del archivo de configuración
   update  [CALENDARIO]                         Mover eventos de la semana anterior al calendar-done.txt. Utilizar un cron semanal cata lunes. Ejem: 01 00  * * 7 c update
- 
+                      01 00  * * 7 c update personal
+                      01 00  * * 7 c update trabajo
 Envio a otras apps:
   not     [CALENDARIO] [PALABRA] [PALABRA]...  Publicar notificaciones. Aplicación mensajería configurada en calendario.conf. Configura con: c config
   nott    [CALENDARIO] [PALABRA] [PALABRA]...  Mostrar en terminal las notificaciones para eventos de dentro de 7,3,2,1 dias y eventos de hoy.
@@ -214,7 +204,7 @@ exit
 fi
 
 
-if [ "$1" = "m" ]
+if [ "$1" = "mount" ]
 then
 
 if [ "$2" != "" ]
@@ -599,6 +589,17 @@ read -e -p "Mes: " -i "$(date  +'%m')" MES
 read -e -p "Año: " -i "$(date  +'%Y')" ANO    
 clear   
 CALDIA=$(date -d "$(echo "$ANO-$MES-$DIA")" +'%Y-%m-%d')
+
+if [ "$(echo "$TODO" | grep "^$CALDIA")" = "" ]
+then
+echo ""
+echo "Esta fecha no está en la plantilla del calendario"
+echo ""
+echo "  Edita fechas pasadas con: c ed"
+echo ""
+exit
+fi
+
 read -e -p "Evento a editar: " -i "$(echo "$TODO" | grep -i "$CALDIA" )" RESPUESTA
 echo ""
 echo ""
@@ -662,6 +663,20 @@ read -e -p "Año: " -i "$(date  +'%Y')" ANO
 read -e -p "Hora: " -i "$(date  +'%H:%M')" HORA 
 clear
 CALDIA=$(date -d "$(echo "$ANO-$MES-$DIA")" +'%Y-%m-%d')
+
+
+
+if [ "$(echo "$TODO" | grep "^$CALDIA")" = "" ]
+then
+echo ""
+echo "Esta fecha no está en la plantilla del calendario"
+echo ""
+echo "  Edita fechas pasadas con: c ed"
+echo ""
+exit
+fi
+
+
 if [ "$(echo "$(echo "$TODO" | grep $CALDIA | cut -d " " -f4-)")" != "" ]
 then
     echo "Ya hay un evento ese día: $(echo "$(echo "$TODO" | grep $CALDIA | cut -d " " -f4-)") "
@@ -672,7 +687,7 @@ then
 		echo ""
                 echo -en "Evento: " ; read -e EVENT
       fi     
-    echo -en "Quieres añadir una de las etiquetes preestablecidas?: " ; read RESPUESTA
+    echo -en "Quieres añadir un proyecto preestablecido?: " ; read RESPUESTA
     if [ "$RESPUESTA" = "SI" ] || [ "$RESPUESTA" = "S" ] || [ "$RESPUESTA" = "si" ] || [ "$RESPUESTA" = "s" ]
             then
 TAGS=$(echo "$(rclone cat $CAL)\n$(rclone cat $CAL_DONE)" | grep " +\w" | cut -d"+" -f2 | cut -d" " -f1 | awk '!($0 in a) {a[$0];print}' | grep .)
@@ -684,14 +699,27 @@ TAGS=$(echo "$(rclone cat $CAL)\n$(rclone cat $CAL_DONE)" | grep " +\w" | cut -d
     echo     "    Etiqueta +"$(echo "$TAGS" | sed -n "$NUM"p)""
     ADDTAG="$(echo +$(echo "$TAGS" | sed -n "$NUM"p))"
 fi
-if [ "$(echo "$(echo "$TODO" | grep $CALDIA | cut -d " " -f4-)")" != "" ]
+    echo -en "Quieres añadir un contextos preestablecido?: " ; read RESPUESTA
+    if [ "$RESPUESTA" = "SI" ] || [ "$RESPUESTA" = "S" ] || [ "$RESPUESTA" = "si" ] || [ "$RESPUESTA" = "s" ]
+            then
+TAGS=$(echo "$(rclone cat $CAL)\n$(rclone cat $CAL_DONE)" | grep " @\w" | cut -d"@" -f2 | cut -d" " -f1 | awk '!($0 in a) {a[$0];print}' | grep .)
+     echo ""
+    echo "Contextos ya creadas: "
+    echo "$TAGS" |  nl -s '. '
+    echo ""
+    echo -en "Selecciona el nº de etiqueta: " ; read -e NUM
+    echo     "    Etiqueta +"$(echo "$TAGS" | sed -n "$NUM"p)""
+    ADDCON="$(echo @$(echo "$TAGS" | sed -n "$NUM"p))"
+fi
+
+    if [ "$(echo "$(echo "$TODO" | grep $CALDIA | cut -d " " -f4-)")" != "" ]
 then
     ## Ya hay un evento 
 echo ""
                 clear
 		CALDIA=$(date -d "$(echo "$ANO-$MES-$DIA")" +'%Y-%m-%d')
                 TASK=$(echo "$TODO" | grep -n $CALDIA | cut -d ":" -f1)
-                RESPUESTA=$(echo "$(echo "$TODO" | grep $CALDIA) → $HORA $EVENT $ADDTAG")                
+                RESPUESTA=$(echo "$(echo "$TODO" | grep $CALDIA) → $HORA $EVENT $ADDTAG $ADDCON")                
                 echo ""
                 echo ""
                 echo "$TODO" | sed "s|$(echo "$TODO" | sed -n "$TASK"p)|$RESPUESTA|g" | sed '/^ *$/d' | rclone rcat $CAL
@@ -703,13 +731,15 @@ else
 clear
 CALDIA=$(date -d "$(echo "$ANO-$MES-$DIA")" +'%Y-%m-%d')
 TASK=$(echo "$TODO" | grep -n $CALDIA | cut -d ":" -f1)
-RESPUESTA=$(echo "$(echo "$TODO" | grep $CALDIA | cut -d " " -f1,2,3) $HORA $EVENT $ADDTAG")
+RESPUESTA=$(echo "$(echo "$TODO" | grep $CALDIA | cut -d " " -f1,2,3) $HORA $EVENT $ADDTAG $ADDCON")
 echo "$TODO" | sed "s|$(echo "$TODO" | sed -n "$TASK"p)|$RESPUESTA|g" | sed '/^ *$/d' | rclone rcat $CAL
     date -d "$(echo "$RESPUESTA " | cut -d' ' -f1)" +'%A %d de %B del %Y'
     echo "----------------------------"
     echo -e $(echo "$RESPUESTA " | cut -d " " -f4-) | sed 's/→/\n/g'  | sed 's/^ *//g' | sed 's/^/ - /'
     echo ""
 fi
+LOGADD=$(echo "$(date +'%Y/%m/%d %T')  :  ADD EVENT \t $HORA $EVENT $ADDTAG $ADDCON")
+echo -ne "$(rclone cat $LOGS)\n$(echo "$LOGADD")" | rclone rcat $LOGS
 exit
 fi
 
@@ -749,6 +779,8 @@ TASK=$(echo "$TODO" | grep -n $CALDIA | cut -d ":" -f1)
 RESPUESTA=$(echo "$(echo "$TODO" | grep $CALDIA | cut -d " " -f1,2,3) $EVENT")
 echo "$TODO" | sed "s|$(echo "$TODO" | sed -n "$TASK"p)|$RESPUESTA|g" | sed '/^ *$/d' | rclone rcat $CAL
 echo "Evento eliminado"
+LOGADD=$(echo "$(date +'%Y/%m/%d %T')  :  DEL EVENT \t $TASK")
+echo -ne "$(rclone cat $LOGS)\n$(echo "$LOGADD")" | rclone rcat $LOGS
 exit
 fi
 
@@ -1048,6 +1080,16 @@ fi
 exit
 fi
 
+if [ "$1" = "logs" ] || [ "$1" = "log" ]
+then
+    echo "rccalendar. logs"
+    echo "-------------"
+rclone cat $LOGS
+echo ""
+exit
+fi
+
+
 CALENDAR_RC=$(rclone cat $CAL |&  grep -i "$1" | grep -i "$2" | grep -i "$3" |egrep "$(date +"W%V")|$(date --date='+1 week' +"W%V")"  )
 NOHAYEVENTOS="$(echo "$CALENDAR_RC" |  awk '{print $4}')"
 if [ "$NOHAYEVENTOS" = "" ]
@@ -1062,4 +1104,3 @@ while read LINEA; do
     echo -e $(echo "$CALENDAR_RC" | sed -n "$LINEA"p | cut -d " " -f4-) | sed 's/→/\n/g' |sed 's/^ *//g' | sed 's/^/ - /'
     echo ""
 done <<< $(echo "$CALENDAR_RC" | cut -d " " -f4- | grep . -n | cut -d ":" -f1)
-
