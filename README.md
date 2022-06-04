@@ -17,6 +17,12 @@ curl -L https://raw.githubusercontent.com/uGeek/rccalendar/main/c -o \
 curl https://rclone.org/install.sh | sudo bash
 ```
 
+- ncal. Para visualizar el calendario anual
+
+```
+sudo apt install ncal
+```
+
 ## Iniciando
 - Lanza el comando `c` y crea un nuevo calendario y archivo de configuración.
 - Rellena el archivo de configuración.
