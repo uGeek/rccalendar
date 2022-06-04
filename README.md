@@ -108,6 +108,8 @@ Gestión de todos los calendarios:
   update  [CALENDARIO]                         Mover eventos de la semana anterior al calendar-done.txt. Utilizar un cron semanal cata lunes. Ejem: 01 00  * * 7 c update
                       01 00  * * 7 c update personal
                       01 00  * * 7 c update trabajo
+  cal                                          Muestra un calendario con todos los meses del año actual                      
+                      
 Envio a otras apps:
   not     [CALENDARIO] [PALABRA] [PALABRA]...  Publicar notificaciones. Aplicación mensajería configurada en calendario.conf. Configura con: c config
   nott    [CALENDARIO] [PALABRA] [PALABRA]...  Mostrar en terminal las notificaciones para eventos de dentro de 7,3,2,1 dias y eventos de hoy.
