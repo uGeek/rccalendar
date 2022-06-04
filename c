@@ -3,7 +3,7 @@
 #  rccalendar
 #  Copyright (c) 2022 uGeek
 #
-VERSION="v0.4.1 04/06/2022"
+VERSION="v0.4.2 04/06/2022"
 
 mkdir -p ~/.config/rccalendar ~/.config/rccalendar/mount
 
@@ -146,6 +146,7 @@ Gestión de todos los calendarios:
   cal 	      	      	      	      	       Muestra un calendario con todos los meses del año actual		      
 		      
 Envio a otras apps:
+  calendarweb  [CALENDARIO]                    Crear calendario web con eventos en el calendario   
   not     [CALENDARIO] [PALABRA] [PALABRA]...  Publicar notificaciones. Aplicación mensajería configurada en calendario.conf. Configura con: c config
   nott    [CALENDARIO] [PALABRA] [PALABRA]...  Mostrar en terminal las notificaciones para eventos de dentro de 7,3,2,1 dias y eventos de hoy.
   lsmds   [CALENDARIO]                         Enviar calendar.txt al archivo markdown añadido en el archivo de configuración. CALENDAR_MD. Archivo actual: $CALENDAR_MD
@@ -246,6 +247,37 @@ $EDITOR  ~/.config/rccalendar/mount/$CALFILE
 fusermount -uz ~/.config/rccalendar/mount/
 exit
 fi
+
+if [ "$1" = "calendarweb" ]                                                                                                                                                                                         
+then     
+
+if [ "$2" != "" ]                                                                                                                                                                                               
+then                                                                                                                                                                                                                
+    if [ -f  ~/.config/rccalendar/$2.conf ];                                                                                                                                                                        
+    then                                                                                                                                                                                                            
+        echo ""                                                                                                                                                                                                     
+        else                                                                                                                                                                                                        
+        echo "No existe este calendario"                                                                                                                                                                            
+        exit                                                                                                                                                                                                        
+        fi                                                                                                                                                                                                          
+    source ~/.config/rccalendar/$2.conf                                                                                                                                                                             
+fi                       
+
+    CALENDAR_RC=$(rclone cat $CAL |& grep "W")                                                                                                                                                                      
+    CALENDAR_PAS=$(rclone cat $CAL_DONE |& grep "W")                                                                                                                                                                
+clear                                                                                                                                                                                                               
+echo ""                                                                                                                                                                                                             
+PAS=$(while read LINEA; do                                                                                                                                                                                          
+    echo -e $(echo "$CALENDAR_PAS" | sed -n "$LINEA"p)                                                                                                                                                              
+         done <<< $(echo "$CALENDAR_PAS" | cut -d " " -f4- | grep . -n | cut -d ":" -f1))                                                                                                                           
+                                                                                                                                                                                                                    
+                                                                                                                                                                                                                    
+FUTURE=$(while read LINEA; do                                                                                                                                                                                       
+    echo -e $(echo "$CALENDAR_RC" | sed -n "$LINEA"p)                                                                                                                                                               
+         done <<< $(echo "$CALENDAR_RC" | cut -d " " -f4- | grep . -n | cut -d ":" -f1))                                                                                                                            
+echo -e "$PAS"\n"$FUTURE" | rclone rcat $CALENDAR_WEB                                                                                                                                                               
+exit                                                                                                                                                                                                                
+fi     
 
 if [ "$1" = "ls" ] 
 then 
@@ -685,7 +717,12 @@ read -e -p "Hora: " -i "$(date  +'%H:%M')" HORA
 clear
 CALDIA=$(date -d "$(echo "$ANO-$MES-$DIA")" +'%Y-%m-%d')
 
-
+if [ "$(echo "$(echo "$TODO" | grep $CALDIA | cut -d " " -f4-)")" = "" ]                                                                                                                                            
+then                                                                                                                                                                                                                
+   NEWCALDIA=$(date -d "$(echo "$ANO-$MES-$DIA")" +'%Y-%m-%d W%W %a')                                                                                                                                               
+   echo -e "$(rclone cat "$CAL")\n$(echo "$NEWCALDIA")" | sort | rclone rcat $CAL                                                                                                                                   
+   TODO="$(rclone cat $CAL |  sed '/^ *$/d')"                                                                                                                                                                       
+    fi                                                             
 
 if [ "$(echo "$TODO" | grep "^$CALDIA")" = "" ]
 then
