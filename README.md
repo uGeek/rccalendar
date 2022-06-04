@@ -33,15 +33,16 @@ curl -L https://raw.githubusercontent.com/uGeek/rccalendar/main/c -o \
                    $HOME/.config/rccalendar/c && chmod +x $HOME/.config/rccalendar/c
 ```
 
-## Opciones
-rccalendar. Calendario en texto plano
---------------------------------------------
+## Opciones rccalendar. Calendario en texto plano
+
 Inspirado en un artículo del blog de Tero Karvinen y sobretodo, en el todo.txt de Gina Trapani, nace rccalendar. 
 rccalendar es un script en bash para gestionar calendarios en texto plano con el método calendar.txt. 
 Es necesario instalar rclone para acceder a los calendarios en tu máquina en local o en la nube.
 
 Opciones disponibles:
-  Si no escribimos ninguna OPCIÓN, la ternimal nos mostrará los eventos para próximas 2 semanas.
+
+```
+ Si no escribimos ninguna OPCIÓN, la ternimal nos mostrará los eventos para próximas 2 semanas.
   p       [CALENDARIO]  Mostrar eventos de las próximas 2 semanas, del calendario indicado.               
   
   init                  Crear archivos de configuración. Por defecto, crea un archivo calendar.txt en local  
@@ -110,4 +111,4 @@ Termux:
   termux                                       Lanza menú para Añadir, Borrar,... Eventos
   termux  [CALENDARIO]                         Lanza menú para Añadir, Borrar,... Eventos del calendario indicado
   termux-install                               Instalación de paquetes necesarios  
-
+```
