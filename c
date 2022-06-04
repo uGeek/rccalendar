@@ -3,8 +3,7 @@
 #  rccalendar
 #  Copyright (c) 2022 uGeek
 #
-VERSION="v0.3 10/04/2022"
-VERSION="v0.4 04/06/2022"
+VERSION="v0.4.1 04/06/2022"
 
 mkdir -p ~/.config/rccalendar ~/.config/rccalendar/mount
 
@@ -13,21 +12,32 @@ then
 echo "Introduce el nombre del calendario: " ; read CALENDARIO
 echo "Creado archivo de configuración $CALENDARIO.conf"
 echo "
-CALFILE='calendar.txt'
-
-CAL='local:$HOME/.config/rccalendar/calendar/calendar.txt'
-
-CAL_DONE='local:$HOME/.config/rccalendar/calendar/calendar-done.txt'
-
-CALENDARDIR='local:$HOME/.config/rccalendar/calendar/'
-
-
-TITLEORG='0. CALENDARIO'
-CALENDAR_ORG='webdav:calendar/org/calendario.org'
-
-CALENDAR_MD='webdav:Notas/calendar_dashboard.md'
-
-EDITOR='nano'
+# Nombre de Archivos del calendario                                                                                                                                                                                 
+CALFILE='calendar.txt'                                                                                                                                                                                              
+                                                                                                                                                                                                                    
+# Ruta del archivo del calendario                                                                                                                                                                                   
+CAL='local:$HOME/.config/rccalendar/calendar/calendar.txt'                                                                                                                                                          
+                                                                                                                                                                                                                    
+# Archivo done                                                                                                                                                                                                      
+CAL_DONE='local:$HOME/.config/rccalendar/calendar/calendar-done.txt'                                                                                                                                                
+                                                                                                                                                                                                                    
+# Directorios de los calendarios                                                                                                                                                                                    
+CALENDARDIR='local:$HOME/.config/rccalendar/calendar/'                                                                                                                                                              
+                                                                                                                                                                                                                    
+                                                                                                                                                                                                                    
+# Archivos de exportación en Markdown, OrgMode,...                                                                                                                                                                  
+TITLEORG='0. CALENDARIO'                                                                                                                                                                                            
+CALENDAR_ORG='webdav:calendar/org/calendario.org'                                                                                                                                                                   
+                                                                                                                                                                                                                    
+CALENDAR_MD='webdav:Notas/calendar_dashboard.md'                                                                                                                                                                    
+                                                                                                                                                                                                                    
+# Editor de texto, para editar calendar                                                                                                                                                                             
+EDITOR='nano'                                                                                                                                                                                                       
+                                                                                                                                                                                                                    
+# Notificaciones. Dentro de la función notification                                                                                                                                                                 
+#function notification {                                                                                                                                                                                            
+### añade aquí el código para las notificiones                                                                                                                                                                      
+#}     
 
 " > $HOME/.config/rccalendar/$CALENDARIO.conf
 echo "source ~/.config/rccalendar/$CALENDARIO.conf" > ~/.config/rccalendar/source
@@ -43,6 +53,15 @@ $EDITOR $HOME/.config/rccalendar/$CALENDARIO.conf
 
 if [ "$1" = "c" ]
 then
+
+      if [ -f  ~/.config/rccalendar/$2.conf ];                                                                                                                                                                        
+    then                                                                                                                                                                                                            
+        echo ""                                                                                                                                                                                                     
+        else                                                                                                                                                                                                        
+            echo "No existe este calendario. Crealo con la opción: init"                                                                                                                                            
+        exit                                                                                                                                                                                                        
+        fi                                                 
+
     echo "source ~/.config/rccalendar/$2.conf" >  ~/.config/rccalendar/source
     source ~/.config/rccalendar/$2.conf
     echo " calendar.txt $(cat ~/.config/rccalendar/source | cut -d "/" -f4 |  cut -d "." -f1)"    
@@ -124,6 +143,8 @@ Gestión de todos los calendarios:
   update  [CALENDARIO]                         Mover eventos de la semana anterior al calendar-done.txt. Utilizar un cron semanal cata lunes. Ejem: 01 00  * * 7 c update
                       01 00  * * 7 c update personal
                       01 00  * * 7 c update trabajo
+  cal 	      	      	      	      	       Muestra un calendario con todos los meses del año actual		      
+		      
 Envio a otras apps:
   not     [CALENDARIO] [PALABRA] [PALABRA]...  Publicar notificaciones. Aplicación mensajería configurada en calendario.conf. Configura con: c config
   nott    [CALENDARIO] [PALABRA] [PALABRA]...  Mostrar en terminal las notificaciones para eventos de dentro de 7,3,2,1 dias y eventos de hoy.
