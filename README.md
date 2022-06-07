@@ -22,6 +22,11 @@ curl https://rclone.org/install.sh | sudo bash
 ```
 sudo apt install ncal
 ```
+- bc. Contabilizar el dias festivos
+```
+sudo apt install bc
+```
+
 
 ## Iniciando
 - Lanza el comando `c` y crea un nuevo calendario y archivo de configuración.
@@ -48,7 +53,8 @@ Es necesario instalar rclone para acceder a los calendarios en tu máquina en lo
 Opciones disponibles:
 
 ```
- Si no escribimos ninguna OPCIÓN, la ternimal nos mostrará los eventos para próximas 2 semanas.
+Opciones disponibles:
+  Si no escribimos ninguna OPCIÓN, la ternimal nos mostrará los eventos para próximas 2 semanas.
   p       [CALENDARIO]  Mostrar eventos de las próximas 2 semanas, del calendario indicado.               
   
   init                  Crear archivos de configuración. Por defecto, crea un archivo calendar.txt en local  
@@ -108,15 +114,32 @@ Gestión de todos los calendarios:
   update  [CALENDARIO]                         Mover eventos de la semana anterior al calendar-done.txt. Utilizar un cron semanal cata lunes. Ejem: 01 00  * * 7 c update
                       01 00  * * 7 c update personal
                       01 00  * * 7 c update trabajo
-  cal                                          Muestra un calendario con todos los meses del año actual                      
-                      
+
+  cal                                          Muestra un calendario con todos los meses del año actual    
+
+  clear                                        Elimina días sin eventos
+
+  f                                            Añadir Eventos, festivos entre 2 fechas
+  i                                            Importar eventos.
+                                               La fecha tiene que guardar el formato 2022-01-20
+                                                  Ejemplo de importación: c i /home/usuario/eventos.txt
+
+  ip                                           Importar desde plantilla. Solo año actual. Ideal para festivos. 
+                                               Formato fecha 01-22
+                                                  Ejemplo de importación: c ip /home/usuario/festivos.txt 
+
+
 Envio a otras apps:
+  calendarweb  [CALENDARIO]                    Crear calendario web con eventos en el calendario   
   not     [CALENDARIO] [PALABRA] [PALABRA]...  Publicar notificaciones. Aplicación mensajería configurada en calendario.conf. Configura con: c config
   nott    [CALENDARIO] [PALABRA] [PALABRA]...  Mostrar en terminal las notificaciones para eventos de dentro de 7,3,2,1 dias y eventos de hoy.
-  lsmds   [CALENDARIO]                         Enviar calendar.txt al archivo markdown añadido en el archivo de configuración. CALENDAR_MD. Archivo actual: $CALENDAR_MD
+  lsmds   [CALENDARIO]                         Enviar calendar.txt al archivo markdown añadido en el archivo de configuración. CALENDAR_MD. Archivo actual: wdsm-server:Notas/trabajo/calendar_dashboard.md
   
+
 Termux:
   termux                                       Lanza menú para Añadir, Borrar,... Eventos
   termux  [CALENDARIO]                         Lanza menú para Añadir, Borrar,... Eventos del calendario indicado
   termux-install                               Instalación de paquetes necesarios  
+
+
 ```
