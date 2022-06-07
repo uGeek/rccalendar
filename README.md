@@ -28,6 +28,24 @@ sudo apt install bc
 ```
 
 
+## Configuración local
+Es necesario utilizar rclone aunque el calendario esté en local.
+En el archivo de configuración de **rclone** añadiremos:
+
+```
+[local]
+type = local
+links = false
+skip_links = false
+no_unicode_normalization = false
+```
+
+Si el calendario estuviera en la ruta `~/calendar/calendar.txt` lo agregaremos así en el archivo de configuración:
+
+```
+"local:/home/usuario/calendar/calendario.txt"
+```
+
 ## Iniciando
 - Lanza el comando `c` y crea un nuevo calendario y archivo de configuración.
 - Rellena el archivo de configuración.
