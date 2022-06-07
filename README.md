@@ -30,7 +30,7 @@ sudo apt install bc
 
 ## Configuración local
 Es necesario utilizar rclone aunque el calendario esté en local.
-En el archivo de configuración de **rclone** añadiremos:
+En el archivo de configuración de **rclone.conf** añadiremos:
 
 ```
 [local]
