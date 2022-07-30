@@ -3,7 +3,7 @@
 #  rccalendar
 #  Copyright (c) 2022 uGeek
 #
-VERSION="v0.4.5 07/06/2022"
+VERSION="v0.4.6 30/07/2022"
 #
 #
 #
@@ -138,7 +138,8 @@ Gestión de todos los calendarios:
   htmlc   [CALENDARIO] [PALABRA] [PALABRA]...  Listar eventos de las próximas 2 semanas en html del calendario indicado
   mdc     [CALENDARIO] [PALABRA] [PALABRA]...  Listar eventos de las próximas 2 semanas en markdown del calendario indicado
   org     [CALENDARIO] [PALABRA] [PALABRA]...  Listar eventos futuro en orgmode del calendario indicado
-
+  orgs                                         Enviar calendario a archivo orgmode
+                                               cron: c c personal ;  c orgs
   lsdc    [CALENDARIO] [PALABRA] [PALABRA]...  Listar eventos pasados del calendario indicado. Archivo calendar-done.txt 
 
   lsb     [CALENDARIO] [PALABRA] [PALABRA]...  Listar todos los eventos futuro en bruto del calendario indicado 
@@ -171,6 +172,7 @@ Envio a otras apps:
   
 
 Termux:
+  atermux                                      Lanza menú para Añadir eventos. Versión terminal
   termux                                       Lanza menú para Añadir, Borrar,... Eventos
   termux  [CALENDARIO]                         Lanza menú para Añadir, Borrar,... Eventos del calendario indicado
   termux-install                               Instalación de paquetes necesarios  
@@ -557,6 +559,21 @@ fi
 
 if [ "$1" = "org" ]
 then
+
+
+if [ "$2" != "" ]
+then
+    if [ -f  ~/.config/rccalendar/$2.conf ];
+    then
+	echo ""
+	else
+	echo "No existe este calendario"
+	exit
+	fi
+    source ~/.config/rccalendar/$2.conf
+    fi    
+    
+    
 CALENDAR_RC=$(rclone cat $CAL |& grep "W" | grep -i "$2"  | grep -i "$3"  | grep -i "$4")
 echo ""
 while read LINEA; do
@@ -588,11 +605,24 @@ done <<< $(echo "$CALENDAR_RC" | cut -d " " -f4- | grep . -n | grep "$3" | cut -
 exit
 fi
 
+
+if [ "$1" = "orgs" ] 
+then
+
+echo -e "#+TITLE:$TITLEORG\n$(c org $2)" | rclone rcat $CALENDAR_ORG
+
+exit
+fi
+
+
+
 if [ "$1" = "lsdb" ] 
 then
 rclone cat $CAL_DONE  | grep -i "$2"  | grep -i "$3"  | grep -i "$4"
 exit
 fi
+
+
 
 if [ "$1" = "lsdbc" ] 
 then
@@ -728,6 +758,91 @@ echo "$TODO" | sed "s|$(echo "$TODO" | sed -n "$TASK"p)|$RESPUESTA|g" | sed '/^ 
     echo ""
 exit
 fi
+
+if [ "$1" = "lo" ]
+then
+if [ "$2" != "" ]
+then
+    if [ -f  ~/.config/rccalendar/$2.conf ];
+    then
+	echo ""
+	else
+	echo "No existe este calendario"
+	exit
+	fi
+    source ~/.config/rccalendar/$2.conf
+fi         
+TODO="$(rclone cat $CAL |  sed '/^ *$/d')"
+read -e -p "Día: " -i "$(date  +'%d')" DIA    
+read -e -p "Mes: " -i "$(date  +'%m')" MES    
+read -e -p "Año: " -i "$(date  +'%Y')" ANO    
+clear   
+CALDIA=$(date -d "$(echo "$ANO-$MES-$DIA")" +'%Y-%m-%d')
+
+if [ "$(echo "$TODO" | grep "^$CALDIA")" = "" ]
+then
+echo ""
+echo "Esta fecha no está en la plantilla del calendario"
+echo ""
+echo "  Edita fechas pasadas con: c ed"
+echo ""
+exit
+fi
+
+echo "Abriendo $(echo "$TODO" | grep -i "$CALDIA" | egrep -o 'https?://[^ ]+')"
+xdg-open $(echo "$TODO"  | sed -n "$TASK"p | egrep -o 'https?://[^ ]+')
+
+
+exit
+fi
+
+
+if [ "$1" = "old" ]
+then
+if [ "$2" != "" ]
+then
+    if [ -f  ~/.config/rccalendar/$2.conf ];
+    then
+	echo ""
+	else
+	echo "No existe este calendario"
+	exit
+	fi
+    source ~/.config/rccalendar/$2.conf
+fi         
+TODO="$(rclone cat $CAL_DONE |  sed '/^ *$/d')"
+read -e -p "Día: " -i "$(date  +'%d')" DIA    
+read -e -p "Mes: " -i "$(date  +'%m')" MES    
+read -e -p "Año: " -i "$(date  +'%Y')" ANO    
+clear   
+CALDIA=$(date -d "$(echo "$ANO-$MES-$DIA")" +'%Y-%m-%d')
+#read -e -p "Evento a editar: " -i "$(echo "$TODO" | grep -i "$CALDIA" )" RESPUESTA
+echo ""
+echo ""
+
+
+echo ""
+#echo "TODO" |  grep -i "$CALDIA" | grep "http"  | egrep -o 'https?://[^ ]+')  | nl -s "- "
+3echo ""
+#echo -n "Selecciona un enlace: " ; read -e ENLACE
+#echo ""
+#echo "Abriendo $(echo "TODO" | grep -i "$CALDIA" | grep "http"  | egrep -o 'https?://[^ ]+') | sed -n "$ENLACE"p)"
+#
+exit									     
+
+
+
+
+echo "Abriendo $(echo "$TODO" | grep -i "$CALDIA" | egrep -o 'https?://[^ ]+')"
+xdg-open $(echo "$TODO"  | sed -n "$TASK"p | egrep -o 'https?://[^ ]+')
+
+    echo ""
+exit
+fi
+
+
+
+
 
 if [ "$1" = "ed" ]
 then
@@ -960,7 +1075,9 @@ while read LINEA; do
 TODO="$(rclone cat $CAL |  sed '/^ *$/d')"
      
 EVENT=$(echo "$(echo $LINEA | cut -d" " -f2-) "$NOTA" "$ADDTAG" "$ADDCON"")
-   
+
+    
+#date -d "$(echo $(date  +'%Y')-$(echo $LINEA | cut -d" " -f1))" +'%Y-%m-%d'    
 
 ANO=$(echo $(date  +'%Y'))
 MES=$(echo $LINEA | cut -d"-" -f1)
@@ -1453,6 +1570,132 @@ fi
 exit
 fi
 
+
+if [ "$1" = "atermux" ] 
+then
+if [ "$2" != "" ]
+then
+    if [ -f  ~/.config/rccalendar/$2.conf ];
+    then
+	echo ""
+	else
+	echo "No existe este calendario"
+	exit
+	fi
+    source ~/.config/rccalendar/$2.conf
+fi    
+TODO="$(rclone cat $CAL |  sed '/^ *$/d')"
+read -e -p "Día: " -i "$(date  +'%d')" DIA      
+read -e -p "Mes: " -i "$(date  +'%m')" MES      
+read -e -p "Año: " -i "$(date  +'%Y')" ANO      
+read -e -p "Hora: " -i "$(date  +'%H:%M')" HORA 
+clear
+CALDIA=$(date -d "$(echo "$ANO-$MES-$DIA")" +'%Y-%m-%d')
+
+if [ "$(echo "$(echo "$TODO" | grep $CALDIA | cut -d " " -f1)")" = "" ]
+then
+   NEWCALDIA=$(date -d "$(echo "$ANO-$MES-$DIA")" +'%Y-%m-%d W%W %a')
+   echo -e "$(rclone cat "$CAL")\n$(echo "$NEWCALDIA")" | sort | rclone rcat $CAL
+   TODO="$(rclone cat $CAL |  sed '/^ *$/d')"
+    fi
+
+
+
+
+if [ "$(echo "$TODO" | grep "^$CALDIA")" = "" ]
+then
+    echo ""
+    echo "Esta fecha no está en la plantilla del calendario"
+    echo ""
+    echo "  Edita fechas pasadas con: c ed"
+    echo ""
+    exit
+fi
+
+
+if [ "$(echo "$(echo "$TODO" | grep $CALDIA | cut -d " " -f4-)")" != "" ]
+then
+    echo "Ya hay un evento ese día: $(echo "$(echo "$TODO" | grep $CALDIA | cut -d " " -f4-)") "
+    echo ""
+    echo -en "Nuevo evento: " ; read -e EVENT
+    echo ""
+else
+    echo ""
+    echo -en "Evento: " ; read -e EVENT
+fi
+echo -en "Quieres añadir un proyecto preestablecido?: " ; read RESPUESTA
+if [ "$RESPUESTA" = "SI" ] || [ "$RESPUESTA" = "S" ] || [ "$RESPUESTA" = "si" ] || [ "$RESPUESTA" = "s" ]
+then
+    TAGS=$(echo "$(rclone cat $CAL)\n$(rclone cat $CAL_DONE)" | grep " +\w" | cut -d"+" -f2 | cut -d" " -f1 | awk '!($0 in a) {a[$0];print}' | grep .)
+    echo ""
+    echo "Etiquetas ya creadas: "
+    echo "$TAGS" |  nl -s '. '
+    echo ""
+    echo -en "Selecciona el nº de etiqueta: " ; read -e NUM
+    echo     "    Etiqueta +"$(echo "$TAGS" | sed -n "$NUM"p)""
+    ADDTAG="$(echo +$(echo "$TAGS" | sed -n "$NUM"p))"
+fi
+#######
+echo -en "Quieres añadir un contextos preestablecido?: " ; read RESPUESTA
+if [ "$RESPUESTA" = "SI" ] || [ "$RESPUESTA" = "S" ] || [ "$RESPUESTA" = "si" ] || [ "$RESPUESTA" = "s" ]
+then
+    TAGS=$(echo "$(rclone cat $CAL)\n$(rclone cat $CAL_DONE)" | grep " @\w" | cut -d"@" -f2 | cut -d" " -f1 | awk '!($0 in a) {a[$0];print}' | grep .)
+    echo ""
+    echo "Contextos ya creadas: "
+    echo "$TAGS" |  nl -s '. '
+    echo ""
+    echo -en "Selecciona el nº de etiqueta: " ; read -e NUM
+    echo     "    Etiqueta +"$(echo "$TAGS" | sed -n "$NUM"p)""
+    ADDCON="$(echo @$(echo "$TAGS" | sed -n "$NUM"p))"
+fi
+
+
+echo -en "¿Quieres guardar la geolocalización?: " ; read RESPUESTA
+if [ "$RESPUESTA" = "SI" ] || [ "$RESPUESTA" = "s" ] || [ "$RESPUESTA" = "si" ] || [ "$RESPUESTA" = "y" ] || [ "$RESPUESTA" = "S" ] || [ "$RESPUESTA" = "Y" ]
+then    
+ADDGEO=$(echo "https://maps.google.com/maps?q="$(termux-location | jq '.latitude' -r)","$(termux-location | jq '.longitude' -r)"")
+if [ "$ADDGEO" = "" ]
+then
+    echo "No funciona la Geolocalizacion. Vuelve a introducir el evento sin ella"
+    exit
+    fi
+fi
+
+
+
+if [ "$(echo "$(echo "$TODO" | grep $CALDIA | cut -d " " -f4-)")" != "" ]
+then
+    ## Ya hay un evento
+    echo ""
+    clear
+    CALDIA=$(date -d "$(echo "$ANO-$MES-$DIA")" +'%Y-%m-%d')
+    TASK=$(echo "$TODO" | grep -n $CALDIA | cut -d ":" -f1)
+    RESPUESTA=$(echo "$(echo "$TODO" | grep $CALDIA) → $HORA $EVENT $ADDTAG $ADDCON" "$ADDGEO")
+    echo ""
+    echo ""
+    echo "$TODO" | sed "s|$(echo "$TODO" | sed -n "$TASK"p)|$RESPUESTA|g" | sed '/^ *$/d' | rclone rcat $CAL
+    date -d "$(echo "$RESPUESTA " | cut -d' ' -f1)" +'%A %d de %B del %Y'
+    echo "----------------------------"
+    echo -e $(echo "$RESPUESTA " | cut -d " " -f4-) | sed s'|→|\n|'g | sed 's/^ *//g' | sed 's/^/ - /'
+    echo ""
+else
+    clear
+    CALDIA=$(date -d "$(echo "$ANO-$MES-$DIA")" +'%Y-%m-%d')
+    TASK=$(echo "$TODO" | grep -n $CALDIA | cut -d ":" -f1)
+    RESPUESTA=$(echo "$(echo "$TODO" | grep $CALDIA | cut -d " " -f1,2,3) $HORA $EVENT $ADDTAG $ADDCON" "$ADDGEO")
+    echo "$TODO" | sed "s|$(echo "$TODO" | sed -n "$TASK"p)|$RESPUESTA|g" | sed '/^ *$/d' | rclone rcat $CAL
+    date -d "$(echo "$RESPUESTA " | cut -d' ' -f1)" +'%A %d de %B del %Y'
+    echo "----------------------------"
+    echo -e $(echo "$RESPUESTA " | cut -d " " -f4-) | sed 's/→/\n/g'  | sed 's/^ *//g' | sed 's/^/ - /'
+    echo ""
+fi
+LOGADD=$(echo "$(date +'%Y/%m/%d %T')  :  ADD EVENT \t $HORA $EVENT $ADDTAG $ADDCON $ADDGEO")
+echo -ne "$(rclone cat $LOGS)\n$(echo "$LOGADD")" | rclone rcat $LOGS
+exit
+fi
+
+
+
 if [ "$1" = "logs" ] || [ "$1" = "log" ]
 then
     echo "rccalendar. logs"
@@ -1477,4 +1720,3 @@ while read LINEA; do
     echo -e $(echo "$CALENDAR_RC" | sed -n "$LINEA"p | cut -d " " -f4-) | sed 's/→/\n/g' |sed 's/^ *//g' | sed 's/^/ - /'
     echo ""
 done <<< $(echo "$CALENDAR_RC" | cut -d " " -f4- | grep . -n | cut -d ":" -f1)
-
