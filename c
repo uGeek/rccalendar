@@ -5,44 +5,49 @@
 #
 VERSION="v0.4.7 20/11/2022"
 #
+# - 0.4.6 Añadir desde la terminal en termux tareas y geolocalización
+# - 0.4.5 Impotación i
+# - 0.4.4 Añadido comando clear y ip
+#
 #
 #
 
 
 mkdir -p ~/.config/rccalendar ~/.config/rccalendar/mount
 
-
 if [ "$1" = "install" ]
 then
-mkdir -p $HOME/.local/bin
-echo "alias c='bash ~/.local/bin/c'" > $HOME/.bashrc
-curl -L https://raw.githubusercontent.com/uGeek/rccalendar/main/c -o  $HOME/.local/bin/c && chmod +x $HOME/.local/bin/c
-mkdir -p $HOME/.config/rccalendar/
-curl -L https://raw.githubusercontent.com/uGeek/rccalendar/main/.config/rccalendar/personal.conf -o  $HOME/.config/rccalendar/personal.conf
-### paquetes
-sudo apt install curl bc ncal -y
-curl https://rclone.org/install.sh | sudo bash
-clear
-echo "Edita el archivo de configuración: $HOME/.config/rccalendar/personal.conf"
-exit
+    mkdir -p $HOME/.local/bin
+    echo "alias c='bash ~/.local/bin/c'" > $HOME/.bashrc
+    curl -L https://raw.githubusercontent.com/uGeek/rccalendar/main/c -o  $HOME/.local/bin/c && chmod +x $HOME/.local/bin/c
+    mkdir -p $HOME/.config/rccalendar/
+    curl -L https://raw.githubusercontent.com/uGeek/rccalendar/main/.config/rccalendar/personal.conf -o  $HOME/.config/rccalendar/personal.conf
+    ### paquetes
+    sudo apt install curl bc ncal -y
+    curl https://rclone.org/install.sh | sudo bash
+    clear
+    echo "Edita el archivo de configuración: $HOME/.config/rccalendar/personal.conf"
+    exit
 fi
 
 if [ "$1" = "install" ] || [ "$2" = "termux" ]
 then
-mkdir -p $HOME/.local/bin
-echo "alias c='bash ~/.local/bin/c'" > $HOME/.bashrc
-curl -L https://raw.githubusercontent.com/uGeek/rccalendar/main/c -o $HOME/.local/bin/c && chmod +x $HOME/.local/bin/c
-mkdir -p $HOME/.config/rccalendar/
-curl -L https://raw.githubusercontent.com/uGeek/rccalendar/main/.config/rccalendar/personal.conf -o  $HOME/.config/rccalendar/personal.conf
-### Termux
-pkg upgrade    
-pkg install jq termux-api termux-services rclone -y
-mkdir -p ~/.shortcuts
-echo "bash ~/.config/rccalendar/c termux" > ~/.shortcuts/Calendario
-clear
-echo "Edita el archivo de configuración: $HOME/.config/rccalendar/personal.conf"
-exit
+    mkdir -p $HOME/.local/bin
+    echo "alias c='bash ~/.local/bin/c'" > $HOME/.bashrc
+    curl -L https://raw.githubusercontent.com/uGeek/rccalendar/main/c -o $HOME/.local/bin/c && chmod +x $HOME/.local/bin/c
+    mkdir -p $HOME/.config/rccalendar/
+    curl -L https://raw.githubusercontent.com/uGeek/rccalendar/main/.config/rccalendar/personal.conf -o  $HOME/.config/rccalendar/personal.conf
+    ### Termux
+    pkg upgrade
+    pkg install jq termux-api termux-services rclone -y
+    mkdir -p ~/.shortcuts
+    echo "bash ~/.config/rccalendar/c termux" > ~/.shortcuts/Calendario
+    clear
+    echo "Edita el archivo de configuración: $HOME/.config/rccalendar/personal.conf"
+    exit
 fi
+
+
 
 if [ "$1" = "init" ]
 then
@@ -210,7 +215,7 @@ Termux:
   termux  [CALENDARIO]                         Lanza menú para Añadir, Borrar,... Eventos del calendario indicado
   termux-install                               Instalación de paquetes necesarios  
 
-Instalación_
+Instalación
   install                                      Instalación en distros ubuntu,debian,...
   install termux                               Instalación en termux para android
 
@@ -440,7 +445,7 @@ fi
 
 if [ "$1" = "html" ]
 then
-CALENDAR_RC=$(rclone cat $CAL |& grep -E "$(date +"W%V")|$(date --date='+1 week' +"W%V")" | grep -i "$2" | grep -i "$3" | grep -i "$4")
+CALENDAR_RC=$(rclone cat $CAL |& egrep "$(date +"W%V")|$(date --date='+1 week' +"W%V")" | grep -i "$2" | grep -i "$3" | grep -i "$4")
 clear
 echo ""
 while read LINEA; do 
@@ -464,7 +469,7 @@ then
 	fi
     source ~/.config/rccalendar/$2.conf
 fi    
-CALENDAR_RC=$(rclone cat $CAL |& grep -E "$(date +"W%V")|$(date --date='+1 week' +"W%V")" | grep -i "$3" | grep -i "$4" | grep -i "$5")
+CALENDAR_RC=$(rclone cat $CAL |& egrep "$(date +"W%V")|$(date --date='+1 week' +"W%V")" | grep -i "$3" | grep -i "$4" | grep -i "$5")
 clear
 echo ""
 while read LINEA; do  
@@ -477,7 +482,7 @@ fi
 
 if [ "$1" = "md" ] 
 then
-CALENDAR_RC=$(rclone cat $CAL |& grep -E "$(date +"W%V")|$(date --date='+1 week' +"W%V")" | grep -i "$2" | grep -i "$3" | grep -i "$4" )
+CALENDAR_RC=$(rclone cat $CAL |& egrep "$(date +"W%V")|$(date --date='+1 week' +"W%V")" | grep -i "$2" | grep -i "$3" | grep -i "$4" )
 clear
 echo ""
 while read LINEA; do    
@@ -501,7 +506,7 @@ then
 	fi
     source ~/.config/rccalendar/$2.conf
 fi
-CALENDAR_RC=$(rclone cat $CAL |& grep -E "$(date +"W%V")|$(date --date='+1 week' +"W%V")" | grep -i "$3" | grep -i "$4" | grep -i "$5" )
+CALENDAR_RC=$(rclone cat $CAL |& egrep "$(date +"W%V")|$(date --date='+1 week' +"W%V")" | grep -i "$3" | grep -i "$4" | grep -i "$5" )
 clear
 echo ""
 while read LINEA; do
@@ -826,8 +831,8 @@ echo ""
 exit
 fi
 
-echo "Abriendo $(echo "$TODO" | grep -i "$CALDIA" | grep -E -o 'https?://[^ ]+')"
-xdg-open $(echo "$TODO"  | sed -n "$TASK"p | grep -E -o 'https?://[^ ]+')
+echo "Abriendo $(echo "$TODO" | grep -i "$CALDIA" | egrep -o 'https?://[^ ]+')"
+xdg-open $(echo "$TODO"  | sed -n "$TASK"p | egrep -o 'https?://[^ ]+')
 
 
 exit
@@ -836,42 +841,48 @@ fi
 
 if [ "$1" = "old" ]
 then
-if [ "$2" != "" ]
-then
-    if [ -f  ~/.config/rccalendar/$2.conf ];
-    then
-	echo ""
-	else
-	echo "No existe este calendario"
-	exit
-	fi
-    source ~/.config/rccalendar/$2.conf
-fi         
-TODO="$(rclone cat $CAL_DONE |  sed '/^ *$/d')"
-read -e -p "Día: " -i "$(date  +'%d')" DIA    
-read -e -p "Mes: " -i "$(date  +'%m')" MES    
-read -e -p "Año: " -i "$(date  +'%Y')" ANO    
-clear   
-CALDIA=$(date -d "$(echo "$ANO-$MES-$DIA")" +'%Y-%m-%d')
+
+CALENDAR=$(rclone cat $CAL |& grep "W" | grep -i "$2" | grep -i "$3" | grep -i "$4")
+CALENDAR_DONE=$(rclone cat $CAL_DONE |& grep "W" | grep -i "$2" | grep -i "$3" | grep -i "$4" )
+CALENDAR_RC=$(echo -e "$CALENDAR_DONE\n$CALENDAR")
+clear
+echo ""
+
+EVENT=$(while read LINEA; do
+    date -d "$(echo "$CALENDAR_RC" | sed -n "$LINEA"p | cut -d' ' -f1)" +'%A %d de %B del %Y'
+    echo "----------------------------"
+    echo -e $(echo "$CALENDAR_RC" | sed -n "$LINEA"p | cut -d " " -f4-)  | sed 's/→/\n/g'  | sed 's/^ *//g' | sed 's/^/ - /'
+    echo ""
+
+	done <<< $(echo "$CALENDAR_RC" | cut -d " " -f4- | grep . -n  | cut -d ":" -f1)
+     )
+
+echo "$EVENT"
+
+
+
+
+#    CALDIA=$(date -d "$(echo "$ANO-$MES-$DIA")" +'%Y-%m-%d')
 #read -e -p "Evento a editar: " -i "$(echo "$TODO" | grep -i "$CALDIA" )" RESPUESTA
 echo ""
 echo ""
 
-
+echo "$EVENT" |  grep "http"  |  nl -s "- "
+exit
 echo ""
-#echo "TODO" |  grep -i "$CALDIA" | grep "http"  | grep -E -o 'https?://[^ ]+')  | nl -s "- "
-3echo ""
+echo "$EVENT" |  grep "http"  | egrep -o 'https?://[^ ]+'  | nl -s "- "
+echo ""
 #echo -n "Selecciona un enlace: " ; read -e ENLACE
 #echo ""
-#echo "Abriendo $(echo "TODO" | grep -i "$CALDIA" | grep "http"  | grep -E -o 'https?://[^ ]+') | sed -n "$ENLACE"p)"
+#echo "Abriendo $(echo "TODO" | grep -i "$CALDIA" | grep "http"  | egrep -o 'https?://[^ ]+') | sed -n "$ENLACE"p)"
 #
 exit									     
 
 
 
 
-echo "Abriendo $(echo "$TODO" | grep -i "$CALDIA" | grep -E -o 'https?://[^ ]+')"
-xdg-open $(echo "$TODO"  | sed -n "$TASK"p | grep -E -o 'https?://[^ ]+')
+echo "Abriendo $(echo "$TODO" | grep -i "$CALDIA" | egrep -o 'https?://[^ ]+')"
+xdg-open $(echo "$TODO"  | sed -n "$TASK"p | egrep -o 'https?://[^ ]+')
 
     echo ""
 exit
@@ -1365,7 +1376,7 @@ then
     source ~/.config/rccalendar/$2.conf
 fi    
 
-CALENDAR_RC=$(rclone cat $CAL |& grep -E "$(date +"W%V")|$(date --date='+1 week' +"W%V")" | grep -i "$3" | grep -i "$4"| grep -i "$5" )
+CALENDAR_RC=$(rclone cat $CAL |& egrep "$(date +"W%V")|$(date --date='+1 week' +"W%V")" | grep -i "$3" | grep -i "$4"| grep -i "$5" )
 NOHAYEVENTOS="$(echo "$CALENDAR_RC" |  awk '{print $4}')"
 if [ "$NOHAYEVENTOS" = "" ]
 then
@@ -1700,6 +1711,7 @@ fi
 
 
 
+####
 if [ "$(echo "$(echo "$TODO" | grep $CALDIA | cut -d " " -f4-)")" != "" ]
 then
     ## Ya hay un evento
@@ -1743,7 +1755,7 @@ exit
 fi
 
 
-CALENDAR_RC=$(rclone cat $CAL |&  grep -i "$1" | grep -i "$2" | grep -i "$3" |grep -E "$(date +"W%V")|$(date --date='+1 week' +"W%V")"  )
+CALENDAR_RC=$(rclone cat $CAL |&  grep -i "$1" | grep -i "$2" | grep -i "$3" |egrep "$(date +"W%V")|$(date --date='+1 week' +"W%V")"  )
 NOHAYEVENTOS="$(echo "$CALENDAR_RC" |  awk '{print $4}')"
 if [ "$NOHAYEVENTOS" = "" ]
 then
@@ -1757,3 +1769,4 @@ while read LINEA; do
     echo -e $(echo "$CALENDAR_RC" | sed -n "$LINEA"p | cut -d " " -f4-) | sed 's/→/\n/g' |sed 's/^ *//g' | sed 's/^/ - /'
     echo ""
 done <<< $(echo "$CALENDAR_RC" | cut -d " " -f4- | grep . -n | cut -d ":" -f1)
+
