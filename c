@@ -444,7 +444,7 @@ fi
 
 if [ "$1" = "html" ]
 then
-CALENDAR_RC=$(rclone cat $CAL |& egrep "$(date +"W%V")|$(date --date='+1 week' +"W%V")" | grep -i "$2" | grep -i "$3" | grep -i "$4")
+CALENDAR_RC=$(rclone cat $CAL |& grep -E "$(date +"W%V")|$(date --date='+1 week' +"W%V")" | grep -i "$2" | grep -i "$3" | grep -i "$4")
 clear
 echo ""
 while read LINEA; do 
@@ -468,7 +468,7 @@ then
 	fi
     source ~/.config/rccalendar/$2.conf
 fi    
-CALENDAR_RC=$(rclone cat $CAL |& egrep "$(date +"W%V")|$(date --date='+1 week' +"W%V")" | grep -i "$3" | grep -i "$4" | grep -i "$5")
+CALENDAR_RC=$(rclone cat $CAL |& grep -E "$(date +"W%V")|$(date --date='+1 week' +"W%V")" | grep -i "$3" | grep -i "$4" | grep -i "$5")
 clear
 echo ""
 while read LINEA; do  
@@ -481,7 +481,7 @@ fi
 
 if [ "$1" = "md" ] 
 then
-CALENDAR_RC=$(rclone cat $CAL |& egrep "$(date +"W%V")|$(date --date='+1 week' +"W%V")" | grep -i "$2" | grep -i "$3" | grep -i "$4" )
+CALENDAR_RC=$(rclone cat $CAL |& grep -E "$(date +"W%V")|$(date --date='+1 week' +"W%V")" | grep -i "$2" | grep -i "$3" | grep -i "$4" )
 clear
 echo ""
 while read LINEA; do    
@@ -505,7 +505,7 @@ then
 	fi
     source ~/.config/rccalendar/$2.conf
 fi
-CALENDAR_RC=$(rclone cat $CAL |& egrep "$(date +"W%V")|$(date --date='+1 week' +"W%V")" | grep -i "$3" | grep -i "$4" | grep -i "$5" )
+CALENDAR_RC=$(rclone cat $CAL |& grep -E "$(date +"W%V")|$(date --date='+1 week' +"W%V")" | grep -i "$3" | grep -i "$4" | grep -i "$5" )
 clear
 echo ""
 while read LINEA; do
@@ -830,8 +830,8 @@ echo ""
 exit
 fi
 
-echo "Abriendo $(echo "$TODO" | grep -i "$CALDIA" | egrep -o 'https?://[^ ]+')"
-xdg-open $(echo "$TODO"  | sed -n "$TASK"p | egrep -o 'https?://[^ ]+')
+echo "Abriendo $(echo "$TODO" | grep -i "$CALDIA" | grep -E -o 'https?://[^ ]+')"
+xdg-open $(echo "$TODO"  | sed -n "$TASK"p | grep -E -o 'https?://[^ ]+')
 
 
 exit
@@ -863,19 +863,19 @@ echo ""
 
 
 echo ""
-#echo "TODO" |  grep -i "$CALDIA" | grep "http"  | egrep -o 'https?://[^ ]+')  | nl -s "- "
+#echo "TODO" |  grep -i "$CALDIA" | grep "http"  | grep -E -o 'https?://[^ ]+')  | nl -s "- "
 3echo ""
 #echo -n "Selecciona un enlace: " ; read -e ENLACE
 #echo ""
-#echo "Abriendo $(echo "TODO" | grep -i "$CALDIA" | grep "http"  | egrep -o 'https?://[^ ]+') | sed -n "$ENLACE"p)"
+#echo "Abriendo $(echo "TODO" | grep -i "$CALDIA" | grep "http"  | grep -E -o 'https?://[^ ]+') | sed -n "$ENLACE"p)"
 #
 exit									     
 
 
 
 
-echo "Abriendo $(echo "$TODO" | grep -i "$CALDIA" | egrep -o 'https?://[^ ]+')"
-xdg-open $(echo "$TODO"  | sed -n "$TASK"p | egrep -o 'https?://[^ ]+')
+echo "Abriendo $(echo "$TODO" | grep -i "$CALDIA" | grep -E -o 'https?://[^ ]+')"
+xdg-open $(echo "$TODO"  | sed -n "$TASK"p | grep -E -o 'https?://[^ ]+')
 
     echo ""
 exit
@@ -1369,7 +1369,7 @@ then
     source ~/.config/rccalendar/$2.conf
 fi    
 
-CALENDAR_RC=$(rclone cat $CAL |& egrep "$(date +"W%V")|$(date --date='+1 week' +"W%V")" | grep -i "$3" | grep -i "$4"| grep -i "$5" )
+CALENDAR_RC=$(rclone cat $CAL |& grep -E "$(date +"W%V")|$(date --date='+1 week' +"W%V")" | grep -i "$3" | grep -i "$4"| grep -i "$5" )
 NOHAYEVENTOS="$(echo "$CALENDAR_RC" |  awk '{print $4}')"
 if [ "$NOHAYEVENTOS" = "" ]
 then
@@ -1747,7 +1747,7 @@ exit
 fi
 
 
-CALENDAR_RC=$(rclone cat $CAL |&  grep -i "$1" | grep -i "$2" | grep -i "$3" |egrep "$(date +"W%V")|$(date --date='+1 week' +"W%V")"  )
+CALENDAR_RC=$(rclone cat $CAL |&  grep -i "$1" | grep -i "$2" | grep -i "$3" |grep -E "$(date +"W%V")|$(date --date='+1 week' +"W%V")"  )
 NOHAYEVENTOS="$(echo "$CALENDAR_RC" |  awk '{print $4}')"
 if [ "$NOHAYEVENTOS" = "" ]
 then
