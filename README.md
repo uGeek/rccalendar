@@ -7,13 +7,13 @@
 ### Instala rccalendar más rápido
 
 ```
-bash <(wget -qO- https://raw.githubusercontent.com/uGeek/bash-install/main/bi.sh) install
+bash <(curl https://raw.githubusercontent.com/uGeek/rccalendar/main/c) install
 ```
 
 ### Instala rccalendar en termux para android
 
 ```
-bash <(wget -qO- https://raw.githubusercontent.com/uGeek/bash-install/main/bi.sh) install termux
+bash <(curl https://raw.githubusercontent.com/uGeek/rccalendar/main/c) install termux
 ```
 
 
