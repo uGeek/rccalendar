@@ -4,7 +4,7 @@
 #  Copyright (c) 2022 uGeek
 #
 VERSION="v0.4.7 20/11/2022"
-#
+# - 0.4.7 Opción de instalación install e install termux
 # - 0.4.6 Añadir desde la terminal en termux tareas y geolocalización
 # - 0.4.5 Impotación i
 # - 0.4.4 Añadido comando clear y ip
