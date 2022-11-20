@@ -3,13 +3,50 @@
 #  rccalendar
 #  Copyright (c) 2022 uGeek
 #
-VERSION="v0.4.6 30/07/2022"
+VERSION="v0.4.7 20/11/2022"
 #
 #
 #
 
 
 mkdir -p ~/.config/rccalendar ~/.config/rccalendar/mount
+
+
+if [ "$1" = "install" ]
+then
+mkdir -p $HOME/.local/bin
+echo "alias c='bash ~/.local/bin/c'" > $HOME/.bashrc
+curl -L https://raw.githubusercontent.com/uGeek/rccalendar/main/c -o \
+                   $HOME/.local/bin/c && chmod +x $HOME/.local/bin/c
+mkdir -p $HOME/.config/rccalendar/
+curl -L https://raw.githubusercontent.com/uGeek/rccalendar/main/.config/rccalendar/personal.conf -o \
+                   $HOME/.config/rccalendar/personal.conf
+### paquetes
+sudo apt install curl bc ncal -y
+curl https://rclone.org/install.sh | sudo bash
+clear
+echo "Edita el archivo de configuración: $HOME/.config/rccalendar/personal.conf"
+exit
+fi
+
+if [ "$1" = "install" ] || [ "$2" = "termux" ]
+then
+mkdir -p $HOME/.local/bin
+echo "alias c='bash ~/.local/bin/c'" > $HOME/.bashrc
+curl -L https://raw.githubusercontent.com/uGeek/rccalendar/main/c -o \
+                   $HOME/.local/bin/c && chmod +x $HOME/.local/bin/c
+mkdir -p $HOME/.config/rccalendar/
+curl -L https://raw.githubusercontent.com/uGeek/rccalendar/main/.config/rccalendar/personal.conf -o \
+                   $HOME/.config/rccalendar/personal.conf
+### Termux
+pkg upgrade    
+pkg install jq termux-api termux-services rclone -y
+mkdir -p ~/.shortcuts
+echo "bash ~/.config/rccalendar/c termux" > ~/.shortcuts/Calendario
+clear
+echo "Edita el archivo de configuración: $HOME/.config/rccalendar/personal.conf"
+exit
+fi
 
 if [ "$1" = "init" ]
 then
@@ -176,6 +213,10 @@ Termux:
   termux                                       Lanza menú para Añadir, Borrar,... Eventos
   termux  [CALENDARIO]                         Lanza menú para Añadir, Borrar,... Eventos del calendario indicado
   termux-install                               Instalación de paquetes necesarios  
+
+Instalación_
+  install                                      Instalación en distros ubuntu,debian,...
+  install termux                               Instalación en termux para android
 
 
 Valores del archivo de configuración, del calendario actual:
