@@ -15,10 +15,19 @@ VERSION="v0.4.7 20/11/2022"
 
 mkdir -p ~/.config/rccalendar ~/.config/rccalendar/mount
 
+
+if [ "$1" = "-U" ]
+then
+    mkdir -p $HOME/.local/bin
+    echo "alias c='bash ~/.local/bin/c'" >> $HOME/.bashrc
+    curl -L https://raw.githubusercontent.com/uGeek/rccalendar/main/c -o  $HOME/.local/bin/c && chmod +x $HOME/.local/bin/c
+    exit
+fi
+
 if [ "$1" = "install" ]
 then
     mkdir -p $HOME/.local/bin
-    echo "alias c='bash ~/.local/bin/c'" > $HOME/.bashrc
+    echo "alias c='bash ~/.local/bin/c'" >> $HOME/.bashrc
     curl -L https://raw.githubusercontent.com/uGeek/rccalendar/main/c -o  $HOME/.local/bin/c && chmod +x $HOME/.local/bin/c
     mkdir -p $HOME/.config/rccalendar/
     curl -L https://raw.githubusercontent.com/uGeek/rccalendar/main/.config/rccalendar/personal.conf -o  $HOME/.config/rccalendar/personal.conf
@@ -33,7 +42,7 @@ fi
 if [ "$1" = "install" ] || [ "$2" = "termux" ]
 then
     mkdir -p $HOME/.local/bin
-    echo "alias c='bash ~/.local/bin/c'" > $HOME/.bashrc
+    echo "alias c='bash ~/.local/bin/c'" >> $HOME/.bashrc
     curl -L https://raw.githubusercontent.com/uGeek/rccalendar/main/c -o $HOME/.local/bin/c && chmod +x $HOME/.local/bin/c
     mkdir -p $HOME/.config/rccalendar/
     curl -L https://raw.githubusercontent.com/uGeek/rccalendar/main/.config/rccalendar/personal.conf -o  $HOME/.config/rccalendar/personal.conf
@@ -218,7 +227,7 @@ Termux:
 Instalación
   install                                      Instalación en distros ubuntu,debian,...
   install termux                               Instalación en termux para android
-
+  -U                                           Actualización de rccalendar
 
 Valores del archivo de configuración, del calendario actual:
   
