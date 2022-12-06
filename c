@@ -31,11 +31,13 @@ then
     curl -L https://raw.githubusercontent.com/uGeek/rccalendar/main/c -o  $HOME/.local/bin/c && chmod +x $HOME/.local/bin/c
     mkdir -p $HOME/.config/rccalendar/
     curl -L https://raw.githubusercontent.com/uGeek/rccalendar/main/.config/rccalendar/personal.sample.conf -o  $HOME/.config/rccalendar/personal.sample.conf
-    ### paquetes
+    curl -L https://raw.githubusercontent.com/uGeek/rccalendar/main/.config/rccalendar/rccalendar.pg -o  $HOME/.config/rccalendar/rccalendar.sample.pg
+   ### paquetes
     sudo apt install curl bc ncal -y
     curl https://rclone.org/install.sh | sudo bash
     clear
     echo "Edita el archivo de configuración: $HOME/.config/rccalendar/personal.conf"
+    echo "renombra rccalendar.sample.pg por rccalendar.pg"
     exit
 fi
 
@@ -46,13 +48,15 @@ then
     curl -L https://raw.githubusercontent.com/uGeek/rccalendar/main/c -o $HOME/.local/bin/c && chmod +x $HOME/.local/bin/c
     mkdir -p $HOME/.config/rccalendar/
     curl -L https://raw.githubusercontent.com/uGeek/rccalendar/main/.config/rccalendar/personal.sample.conf -o  $HOME/.config/rccalendar/personal.sample.conf
-    ### Termux
+    curl -L https://raw.githubusercontent.com/uGeek/rccalendar/main/.config/rccalendar/rccalendar.pg -o  $HOME/.config/rccalendar/rccalendar.sample.pg
+    ### Termux 
     pkg upgrade
     pkg install jq termux-api termux-services rclone -y
     mkdir -p ~/.shortcuts
     echo "bash ~/.config/rccalendar/c termux" > ~/.shortcuts/Calendario
     clear
     echo "Edita el archivo de configuración: $HOME/.config/rccalendar/personal.sample.conf"
+    echo "renombra rccalendar.sample.pg por rccalendar.pg"
     exit
 fi
 
