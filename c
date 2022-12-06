@@ -30,7 +30,7 @@ then
     echo "alias c='bash ~/.local/bin/c'" >> $HOME/.bashrc
     curl -L https://raw.githubusercontent.com/uGeek/rccalendar/main/c -o  $HOME/.local/bin/c && chmod +x $HOME/.local/bin/c
     mkdir -p $HOME/.config/rccalendar/
-    curl -L https://raw.githubusercontent.com/uGeek/rccalendar/main/.config/rccalendar/personal.conf -o  $HOME/.config/rccalendar/personal.conf
+    curl -L https://raw.githubusercontent.com/uGeek/rccalendar/main/.config/rccalendar/personal.sample.conf -o  $HOME/.config/rccalendar/personal.sample.conf
     ### paquetes
     sudo apt install curl bc ncal -y
     curl https://rclone.org/install.sh | sudo bash
@@ -45,14 +45,14 @@ then
     echo "alias c='bash ~/.local/bin/c'" >> $HOME/.bashrc
     curl -L https://raw.githubusercontent.com/uGeek/rccalendar/main/c -o $HOME/.local/bin/c && chmod +x $HOME/.local/bin/c
     mkdir -p $HOME/.config/rccalendar/
-    curl -L https://raw.githubusercontent.com/uGeek/rccalendar/main/.config/rccalendar/personal.conf -o  $HOME/.config/rccalendar/personal.conf
+    curl -L https://raw.githubusercontent.com/uGeek/rccalendar/main/.config/rccalendar/personal.sample.conf -o  $HOME/.config/rccalendar/personal.sample.conf
     ### Termux
     pkg upgrade
     pkg install jq termux-api termux-services rclone -y
     mkdir -p ~/.shortcuts
     echo "bash ~/.config/rccalendar/c termux" > ~/.shortcuts/Calendario
     clear
-    echo "Edita el archivo de configuración: $HOME/.config/rccalendar/personal.conf"
+    echo "Edita el archivo de configuración: $HOME/.config/rccalendar/personal.sample.conf"
     exit
 fi
 
